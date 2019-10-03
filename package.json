@@ -1,6 +1,6 @@
 {
   "name": "sodium-native-nodejs-mobile",
-  "version": "2.4.2-3",
+  "version": "2.4.2-4",
   "description": "Low level bindings for libsodium",
   "main": "index.js",
   "dependencies": {
@@ -20,7 +20,9 @@
     "dev": "node-gyp rebuild",
     "fetch-libsodium": "git submodule update --recursive --init",
     "test": "standard && tape \"test/*.js\"",
-    "rebuild": "node-gyp-build \"node preinstall.js\" \"node postinstall.js\""
+    "rebuild": "node-gyp-build \"node preinstall.js\" \"node postinstall.js\"",
+    "preinstall": "node preinstall.js",
+    "postinstall": "node postinstall.js"
   },
   "repository": {
     "type": "git",
