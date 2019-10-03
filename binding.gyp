@@ -35,15 +35,17 @@
         '-g',
         '-O3',
       ],
-      'libraries': [
-        '<!(node preinstall.js --print-lib)'
-      ],
       'conditions': [
         ['OS != "mac" and OS != "win"', {
           'link_settings': {
             'libraries': [ "-Wl,-rpath=\\$$ORIGIN"]
           }
         }],
+        ['OS == "android"', {
+          'libraries': [
+            'lib/libsodium-<target_arch>.so'
+          ]
+        }]
       ],
     }
   ]

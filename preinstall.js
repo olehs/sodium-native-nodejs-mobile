@@ -43,21 +43,24 @@ if (process.argv.indexOf('--print-lib') > -1) {
 
 mkdirSync(path.join(__dirname, 'lib'))
 
-switch (os.platform()) {
-  case 'darwin':
-    buildDarwin()
-    break
+// switch (os.platform()) {
+//   case 'darwin':
+//     buildDarwin()
+//     break
 
-  case 'win32':
-    buildWindows()
-    break
+//   case 'win32':
+//     buildWindows()
+//     break
 
-  default:
-    buildUnix('so', function (err) {
-      if (err) throw err
-    })
-    break
-}
+//   default:
+//     buildUnix('so', function (err) {
+//       if (err) throw err
+//     })
+//     break
+// }
+
+buildAndroid('arm')
+buildIOS()
 
 function findMsBuild () {
   var possiblePathSuffixes = [
@@ -141,6 +144,32 @@ function buildDarwin () {
       if (err) throw err
     })
   })
+}
+
+function buildAndroid(arch) {
+  var ext = 'so'
+  var res = path.join(__dirname, 'lib/libsodium-' + arch + '.' + ext)
+  var buildScript = arch === 'arm' ? 'android-armv7-a.sh' : ':'
+  var outputDir = arch === 'arm' ? 'libsodium/libsodium-android-armv7-a/lib' : '.'
+  if (fs.existsSync(res)) return cb(null, res)
+
+  spawn('./configure-mobile', [], { cwd: __dirname, stdio: 'inherit' }, function (err) {
+    if (err) throw err
+    spawn('./dist-build/' + buildScript, [], { cwd: path.resolve(__dirname, 'libsodium'), stdio: 'inherit' }, function (err) {
+      if (err) throw err
+
+      var la = ini.decode(fs.readFileSync(path.resolve(__dirname, outputDir, 'libsodium.la')).toString())
+
+      var lib = fs.realpathSync(path.join(la.libdir, la.dlname))
+      fs.rename(lib, res, function (err) {
+        if (err) throw err
+      })
+    })
+  })
+}
+
+function buildIOS() {
+  // TODO
 }
 
 function spawn (cmd, args, opts, cb) {
