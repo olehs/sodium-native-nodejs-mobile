@@ -10,21 +10,24 @@ var tmp = path.join(__dirname, 'tmp')
 var build = fs.existsSync(release) ? release : debug
 var arch = process.env.ARCH || os.arch()
 
-switch (os.platform()) {
-  case 'win32':
-    buildWindows()
-    break
+// switch (os.platform()) {
+//   case 'win32':
+//     buildWindows()
+//     break
 
-  case 'darwin':
-    buildDarwin()
-    break
+//   case 'darwin':
+//     buildDarwin()
+//     break
 
-  case 'freebsd':
-  case 'openbsd':
-  default:
-    buildUnix()
-    break
-}
+//   case 'freebsd':
+//   case 'openbsd':
+//   default:
+//     buildUnix()
+//     break
+// }
+
+buildAndroid('arm')
+buildIOS()
 
 function buildWindows () {
   var lib = path.join(__dirname, 'lib/libsodium-' + arch + '.dll')
@@ -60,6 +63,22 @@ function buildDarwin () {
       })
     })
   })
+}
+
+function buildAndroid(arch) {
+  var lib = fs.realpathSync(path.join(__dirname, 'lib/libsodium-' + arch + '.so'))
+
+  var la = ini.decode(fs.readFileSync(path.join(__dirname, 'libsodium/libsodium-android-armv7-a/lib/libsodium.la')).toString())
+  var dst = path.join(build, la.dlname)
+
+  if (fs.existsSync(dst)) return
+  copy(lib, dst, function (err) {
+    if (err) throw err
+  })
+}
+
+function buildIOS() {
+  // TODO
 }
 
 function copy (a, b, cb) {
