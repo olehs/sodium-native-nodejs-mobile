@@ -66,7 +66,13 @@ function buildDarwin () {
 }
 
 function buildAndroid(arch) {
-  var lib = fs.realpathSync(path.join(__dirname, 'lib/libsodium-' + arch + '.so'))
+  var libPath = path.join(__dirname, 'lib/libsodium-' + arch + '.so')
+  if (!fs.existsSync(libPath)) {
+    console.error('postinstall failed because expected a file to exist, ' +
+    'but it does not exist: ' + libPath)
+    return
+  }
+  var lib = fs.realpathSync(libPath)
 
   var la = ini.decode(fs.readFileSync(path.join(__dirname, 'libsodium/libsodium-android-armv7-a/lib/libsodium.la')).toString())
   var dst = path.join(build, la.dlname)
