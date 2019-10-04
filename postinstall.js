@@ -71,6 +71,7 @@ function buildAndroid(arch) {
   var la = ini.decode(fs.readFileSync(path.join(__dirname, 'libsodium/libsodium-android-armv7-a/lib/libsodium.la')).toString())
   var dst = path.join(build, la.dlname)
 
+  mkdirSync(build)
   if (fs.existsSync(dst)) return
   copy(lib, dst, function (err) {
     if (err) throw err
@@ -92,4 +93,12 @@ function copy (a, b, cb) {
       })
     })
   })
+}
+
+function mkdirSync (p) {
+  try {
+    fs.mkdirSync(p)
+  } catch (err) {
+    // do nothing
+  }
 }

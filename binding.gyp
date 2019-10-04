@@ -35,16 +35,15 @@
         '-g',
         '-O3',
       ],
+      'libraries': [
+        'lib/libsodium-<target_arch>.so',
+        '-Wl,-rpath=\\$$ORIGIN'
+      ]
       'conditions': [
-        ['OS != "mac" and OS != "win"', {
-          'link_settings': {
-            'libraries': [ "-Wl,-rpath=\\$$ORIGIN"]
-          }
-        }],
-        ['OS == "android"', {
-          'libraries': [
-            'lib/libsodium-<target_arch>.so'
-          ]
+        ['OS != "android"', {
+          'sources': [],
+          'libraries': [],
+          'target_name': ''
         }]
       ],
     }
