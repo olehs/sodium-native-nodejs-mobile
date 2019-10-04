@@ -5,13 +5,8 @@
   'targets': [
     {
       'target_name': 'sodium',
-    }
-  ],
-  'conditions': [
-    ['OS == "android"', {
-      'targets': [
-        {
-          'target_name': 'sodium',
+      'conditions': [
+        ['OS == "android"', {
           'include_dirs' : [
             "<!(node -e \"require('nan')\")",
             'libsodium/src/libsodium/include'
@@ -46,8 +41,8 @@
             'lib/libsodium-<target_arch>.so',
             '-Wl,-rpath=\\$$ORIGIN'
           ],
-        }
+        }]
       ]
-    }]
-  ]
+    }
+  ],
 }
