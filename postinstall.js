@@ -10,21 +10,25 @@ var tmp = path.join(__dirname, 'tmp')
 var build = fs.existsSync(release) ? release : debug
 var arch = process.env.ARCH || os.arch()
 
-switch (os.platform()) {
-  case 'win32':
-    buildWindows()
-    break
+// switch (os.platform()) {
+//   case 'win32':
+//     buildWindows()
+//     break
 
-  case 'darwin':
-    buildDarwin()
-    break
+//   case 'darwin':
+//     buildDarwin()
+//     break
 
-  case 'freebsd':
-  case 'openbsd':
-  default:
-    buildUnix()
-    break
-}
+//   case 'freebsd':
+//   case 'openbsd':
+//   default:
+//     buildUnix()
+//     break
+// }
+
+buildAndroid('arm')
+buildAndroid('arm64')
+buildIOS()
 
 function buildWindows () {
   var lib = path.join(__dirname, 'lib/libsodium-' + arch + '.dll')
@@ -53,13 +57,36 @@ function buildDarwin () {
   if (fs.existsSync(dst)) return
   copy(lib, dst, function (err) {
     if (err) throw err
-    proc.exec('install_name_tool -id "@loader_path/libsodium.dylib" libsodium.dylib', {cwd: build}, function (err) {
+    proc.exec('install_name_tool -id "@loader_path/libsodium.dylib" libsodium.dylib', { cwd: build }, function (err) {
       if (err) throw err
-      proc.exec('install_name_tool -change "' + lib + '" "@loader_path/libsodium.dylib" sodium.node', {cwd: build}, function (err) {
+      proc.exec('install_name_tool -change "' + lib + '" "@loader_path/libsodium.dylib" sodium.node', { cwd: build }, function (err) {
         if (err) throw err
       })
     })
   })
+}
+
+function buildAndroid(arch) {
+  var libPath = path.join(__dirname, 'lib/libsodium-' + arch + '.so')
+  if (!fs.existsSync(libPath)) {
+    console.error('postinstall failed because expected a file to exist, ' +
+    'but it does not exist: ' + libPath)
+    return
+  }
+  var lib = fs.realpathSync(libPath)
+
+  var la = ini.decode(fs.readFileSync(path.join(__dirname, 'libsodium/libsodium-android-armv7-a/lib/libsodium.la')).toString())
+  var dst = path.join(build, la.dlname)
+
+  mkdirSync(build)
+  if (fs.existsSync(dst)) return
+  copy(lib, dst, function (err) {
+    if (err) throw err
+  })
+}
+
+function buildIOS() {
+  // TODO
 }
 
 function copy (a, b, cb) {
@@ -73,4 +100,12 @@ function copy (a, b, cb) {
       })
     })
   })
+}
+
+function mkdirSync (p) {
+  try {
+    fs.mkdirSync(p)
+  } catch (err) {
+    // do nothing
+  }
 }

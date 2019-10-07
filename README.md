@@ -1,14 +1,11 @@
 # sodium-native
+[![build status](https://travis-ci.org/sodium-friends/sodium-native.svg?branch=master)](https://travis-ci.org/sodium-friends/sodium-native)
 
 Low level bindings for [libsodium](https://github.com/jedisct1/libsodium).
 
 ```
 npm install sodium-native
 ```
-
-[![build status](https://travis-ci.org/sodium-friends/sodium-native.svg?branch=master)](https://travis-ci.org/sodium-friends/sodium-native)
-[![build status](https://ci.appveyor.com/api/projects/status/8wi3my2clf1ami6k/branch/master?svg=true)](https://ci.appveyor.com/project/mafintosh/sodium-native/branch/master)
-
 
 The goal of this project is to be thin, stable, unopionated wrapper around libsodium.
 
@@ -48,7 +45,7 @@ if (!sodium.crypto_secretbox_open_easy(plainText, ciphertext, nonce, key)) {
 
 ## API
 
-[**Go to docs for the latest release**](https://github.com/sodium-friends/sodium-native/tree/v2.2.0) (The following docs may be for a unreleased version)
+[**Go to docs for the latest release**](https://github.com/sodium-friends/sodium-native/tree/v2.3.0) (The following docs may be for a unreleased version)
 
 #### `var sodium = require('sodium-native')`
 
@@ -57,7 +54,7 @@ Loads the bindings. If you get an module version error you probably need to rein
 ### Memory Protection
 
 Bindings to the secure memory API.
-[See the libsodium "Securing memory allocations" docs for more information](https://download.libsodium.org/doc/helpers/memory_management.html).
+[See the libsodium "Securing memory allocations" docs for more information](https://download.libsodium.org/doc/memory_management).
 
 #### `sodium.sodium_memzero(buffer)`
 
@@ -73,7 +70,7 @@ Unlock previously `sodium_mlock`ed memory contained in `buffer`. This will also 
 
 #### `var buffer = sodium.sodium_malloc(size)`
 
-Allocate a buffer of `size` which is memory protected. See [libsodium docs](https://download.libsodium.org/doc/helpers/memory_management.html#guarded-heap-allocations) for details. Be aware that many Buffer methods may break the security guarantees of `sodium.sodium_malloc`'ed memory. To check if a `Buffer` is a "secure" buffer,
+Allocate a buffer of `size` which is memory protected. See [libsodium docs](https://download.libsodium.org/doc/memory_management#guarded-heap-allocations) for details. Be aware that many Buffer methods may break the security guarantees of `sodium.sodium_malloc`'ed memory. To check if a `Buffer` is a "secure" buffer,
 you can call access the getter `buffer.secure` which will be `true`.
 
 #### `sodium.sodium_mprotect_noaccess(buffer)`
@@ -117,7 +114,7 @@ of at least `sodium.randombytes_SEEDBYTES` length
 ### Helpers
 
 Bindings to various helper functions.
-[See the libsodium padding docs for more information](https://download.libsodium.org/doc/helpers/).
+[See the libsodium helpers docs for more information](https://download.libsodium.org/doc/helpers/).
 
 ### `var bool = sodium.sodium_memcmp(b1, b2)`
 
@@ -146,6 +143,14 @@ and writing the result into `a`.
 * `a` must be `Buffer`
 * `b` must be `Buffer` and must be `a.length` bytes
 
+### `sodium.sodium_sub(a, b)`
+
+Subtractss `b` from `a` (wrapping), regarding either as little-endian encoded
+number, and writing the result into `a`.
+
+* `a` must be `Buffer`
+* `b` must be `Buffer` and must be `a.length` bytes
+
 ### `sodium.sodium_increment(buf)`
 
 Increment `buf` as a little-endian number. This operation is **constant-time**
@@ -165,7 +170,7 @@ Returns `true` if all `len` bytes are zero, otherwise `false`.
 ### Padding
 
 Bindings to the padding API.
-[See the libsodium padding docs for more information](https://download.libsodium.org/doc/helpers/padding.html).
+[See the libsodium padding docs for more information](https://download.libsodium.org/doc/padding).
 
 #### `var paddedLength = sodium.sodium_pad(buf, unpaddedLength, blocksize)`
 
@@ -191,7 +196,7 @@ Returns the length of the unpadded data (so you may `.slice` the buffer to here)
 ### Signing
 
 Bindings for the crypto_sign API.
-[See the libsodium crypto_sign docs for more information](https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html).
+[See the libsodium crypto_sign docs for more information](https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures).
 
 #### `crypto_sign_seed_keypair(publicKey, secretKey, seed)`
 
@@ -255,20 +260,29 @@ Will return `true` if the message could be verified. Otherwise `false`.
 
 #### `crypto_sign_ed25519_pk_to_curve25519(curve_pk, ed_pk)`
 
-convert a ed25519 public key to curve25519 (which can be used with `box` and `scalarmult`)
+Convert an ed25519 public key to curve25519 (which can be used with `box` and `scalarmult`)
+
 * `curve_pk` should be a buffer with length `crypto_box_PUBLICKEYBYTES`
 * `ed_pk` should be a buffer with length `crypto_sign_PUBLICKEYBYTES`
 
 #### `crypto_sign_ed25519_sk_to_curve25519(curve_sk, ed_sk)`
 
-convert a ed25519 secret key to curve25519 (which can be used with `box` and `scalarmult`)
+Convert an ed25519 secret key to curve25519 (which can be used with `box` and `scalarmult`)
+
 * `curve_sk` should be a buffer with length `crypto_box_SECRETKEYBYTES`
 * `ed_sk` should be a buffer with length `crypto_sign_SECRETKEYBYTES`
+
+#### `crypto_sign_ed25519_sk_to_pk(pk, sk)`
+
+Extract an ed25519 public key from an ed25519 secret key
+
+* `pk` must be `Buffer` of at least `crypto_sign_PUBLICKEYBYTES` bytes
+* `sk` must be `Buffer` of at least `crypto_sign_SECRETKEYBYTES` bytes
 
 ### Generic hashing
 
 Bindings for the crypto_generichash API.
-[See the libsodium crypto_generichash docs for more information](https://download.libsodium.org/doc/hashing/generic_hashing.html).
+[See the libsodium crypto_generichash docs for more information](https://download.libsodium.org/doc/hashing/generic_hashing).
 
 #### `crypto_generichash(output, input, [key])`
 
@@ -310,7 +324,7 @@ The generated hash is stored in `output`.
 ### Public / secret key box encryption
 
 Bindings for the crypto_box API.
-[See the libsodium crypto_box docs for more information](https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption.html).
+[See the libsodium crypto_box docs for more information](https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption).
 
 #### `crypto_box_seed_keypair(publicKey, secretKey, seed)`
 
@@ -388,7 +402,7 @@ The decrypted message will be stored in `message`.
 ### Sealed box encryption
 
 Bindings for the crypto_box_seal API.
-[See the libsodium crypto_box_seal docs for more information](https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes.html).
+[See the libsodium crypto_box_seal docs for more information](https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes).
 
 Keypairs can be generated with `crypto_box_keypair()` or `crypto_box_seed_keypair()`.
 
@@ -419,7 +433,7 @@ the nonce. The throwaway public key generated by the sender is stored in the fir
 ### Secret key box encryption
 
 Bindings for the crypto_secretbox API.
-[See the libsodium crypto_secretbox docs for more information](https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html).
+[See the libsodium crypto_secretbox docs for more information](https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption).
 
 #### `crypto_secretbox_detached(ciphertext, mac, message, nonce, secretKey)`
 
@@ -472,7 +486,7 @@ The decrypted message will be stored in `message`.
 ### AEAD (Authenticated Encryption with Additional Data)
 
 Bindings for the crypto_aead_* APIs.
-[See the libsodium AEAD docs for more information](https://download.libsodium.org/doc/secret-key_cryptography/aead.html).
+[See the libsodium AEAD docs for more information](https://download.libsodium.org/doc/secret-key_cryptography/aead).
 
 Currently only `crypto_aead_xchacha20poly1305_ietf` is exposed.
 
@@ -565,7 +579,7 @@ that in-place encryption is possible.
 ### Non-authenticated streaming encryption
 
 Bindings for the crypto_stream API.
-[See the libsodium crypto_stream docs for more information](https://download.libsodium.org/doc/advanced/xsalsa20.html).
+[See the libsodium crypto_stream docs for more information](https://download.libsodium.org/doc/advanced/stream_ciphers/xsalsa20).
 
 #### `crypto_stream(ciphertext, nonce, key)`
 
@@ -612,7 +626,7 @@ Finalize the stream. Zeros out internal state.
 ### Authentication
 
 Bindings for the crypto_auth API.
-[See the libsodium crypto_auth docs for more information](https://download.libsodium.org/doc/secret-key_cryptography/secret-key_authentication.html).
+[See the libsodium crypto_auth docs for more information](https://download.libsodium.org/doc/secret-key_cryptography/secret-key_authentication).
 
 #### `crypto_auth(output, input, key)`
 
@@ -637,7 +651,7 @@ Returns `true` if the token could be verified. Otherwise `false`.
 ### Stream encryption
 
 Bindings for the crypto_secretstream API.
-[See the libsodium crypto_secretstream docs for more information](https://download.libsodium.org/doc/secret-key_cryptography/secretstream.html).
+[See the libsodium crypto_secretstream docs for more information](https://download.libsodium.org/doc/secret-key_cryptography/secretstream).
 
 ### Constants
 
@@ -723,7 +737,7 @@ Rekey the opaque `state` object.
 ### One-time Authentication
 
 Bindings for the crypto_onetimeauth API.
-[See the libsodium crypto_onetimeauth docs for more information](https://download.libsodium.org/doc/advanced/poly1305.html).
+[See the libsodium crypto_onetimeauth docs for more information](https://download.libsodium.org/doc/advanced/poly1305).
 
 #### `crypto_onetimeauth(output, input, key)`
 
@@ -842,6 +856,74 @@ Just like `crypto_pwhash_str` but will run password hashing on a seperate worker
 
 Just like `crypto_pwhash_str_verify` but will run password hashing on a seperate worker so it will not block the event loop. `callback(err, bool)` will receive any errors from the hashing but all argument errors will `throw`. If the verification succeeds `bool` is `true`, otherwise `false`. Due to an issue with libsodium `err` is currently never set. This function also supports [`async_hook`s](https://nodejs.org/dist/latest/docs/api/async_hooks.html) as the type `sodium-native:crypto_pwhash_str_verify_async`
 
+### Password Hashing (Scrypt)
+
+Bindings for the crypto_pwhash_scryptsalsa208sha256 API.
+[See the libsodium crypto_pwhash_scryptsalsa208sha256 docs for more information](https://download.libsodium.org/doc/advanced/scrypt).
+
+#### `crypto_pwhash_scryptsalsa208sha256(output, password, salt, opslimit, memlimit)`
+
+Create a password hash.
+
+* `output` should be a buffer with length within `crypto_pwhash_scryptsalsa208sha256_BYTES_MIN` - `crypto_pwhash_scryptsalsa208sha256_BYTES_MAX`.
+* `password` should be a buffer of any size.
+* `salt` should be a buffer with length `crypto_pwhash_scryptsalsa208sha256_SALTBYTES`.
+* `opslimit` should a be number containing your ops limit setting in the range `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_MIN` - `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_MAX`.
+* `memlimit` should a be number containing your mem limit setting in the range `crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_MIN` - `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_MAX`.
+
+Available default ops and mem limits are
+
+* `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE`
+* `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE`
+* `crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE`
+* `crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE`
+
+The generated hash will be stored in `output` and the entire `output` buffer will be used.
+
+#### `crypto_pwhash_scryptsalsa208sha256_str(output, password, opslimit, memlimit)`
+
+Create a password hash with a random salt.
+
+* `output` should be a buffer with length `crypto_pwhash_scryptsalsa208sha256_STRBYTES`.
+* `password` should be a buffer of any size.
+* `opslimit` should a be number containing your ops limit setting in the range `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_MIN` - `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_MAX`.
+* `memlimit` should a be number containing your mem limit setting in the range `crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_MIN` - `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_MAX`.
+
+The generated hash, settings, salt, version and algorithm will be stored in `output` and the entire `output` buffer will be used.
+
+#### `var bool = crypto_pwhash_scryptsalsa208sha256_str_verify(str, password)`
+
+Verify a password hash generated with the above method.
+
+* `str` should be a buffer with length `crypto_pwhash_scryptsalsa208sha256_STRBYTES`.
+* `password` should be a buffer of any size.
+
+Returns `true` if the hash could be verified with the settings contained in `str`. Otherwise `false`.
+
+#### `var bool = crypto_pwhash_scryptsalsa208sha256_str_needs_rehash(hash, opslimit, memlimit)`
+
+Check if a password hash needs rehash, either because opslimit or memlimit
+increased or because the hash is malformed.
+
+* `hash` should be a buffer with length `crypto_pwhash_scryptsalsa208sha256_STRBYTES`.
+* `opslimit` should a be number containing your ops limit setting in the range `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_MIN` - `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_MAX`.
+* `memlimit` should a be number containing your mem limit setting in the range `crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_MIN` - `crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_MAX`.
+
+Returns `true` if the hash should be rehashed the settings contained in `str`.
+Otherwise `false` if it is still good.
+
+#### `crypto_pwhash_scryptsalsa208sha256_async(output, password, salt, opslimit, memlimit, callback)`
+
+Just like `crypto_pwhash_scryptsalsa208sha256` but will run password hashing on a seperate worker so it will not block the event loop. `callback(err)` will receive any errors from the hashing but all argument errors will `throw`. The resulting hash is written to `output`. This function also supports [`async_hook`s](https://nodejs.org/dist/latest/docs/api/async_hooks.html) as the type `sodium-native:crypto_pwhash_scryptsalsa208sha256_async`
+
+#### `crypto_pwhash_scryptsalsa208sha256_str_async(output, password, opslimit, memlimit, callback)`
+
+Just like `crypto_pwhash_scryptsalsa208sha256_str` but will run password hashing on a seperate worker so it will not block the event loop. `callback(err)` will receive any errors from the hashing but all argument errors will `throw`. The resulting hash with parameters is written to `output`. This function also supports [`async_hook`s](https://nodejs.org/dist/latest/docs/api/async_hooks.html) as the type `sodium-native:crypto_pwhash_scryptsalsa208sha256_str_async`
+
+#### `crypto_pwhash_scryptsalsa208sha256_str_verify_async(str, password, callback)`
+
+Just like `crypto_pwhash_scryptsalsa208sha256_str_verify` but will run password hashing on a seperate worker so it will not block the event loop. `callback(err, bool)` will receive any errors from the hashing but all argument errors will `throw`. If the verification succeeds `bool` is `true`, otherwise `false`. Due to an issue with libsodium `err` is currently never set. This function also supports [`async_hook`s](https://nodejs.org/dist/latest/docs/api/async_hooks.html) as the type `sodium-native:crypto_pwhash_scryptsalsa208sha256_str_verify_async`
+
 ### Key exchange
 
 Bindings for the crypto_kx API.
@@ -886,10 +968,10 @@ You should use the `rx` to decrypt incoming data and `tx` to encrypt outgoing.
 If you need to make a one-way or half-duplex channel you can give only one of
 `rx` or `tx`.
 
-### Diffie-Hellman (Scalar multiplication)
+### Diffie-Hellman
 
 Bindings for the crypto_scalarmult API.
-[See the libsodium crypto_scalarmult docs for more information](https://download.libsodium.org/doc/advanced/scalar_multiplication.html).
+[See the libsodium crypto_scalarmult docs for more information](https://download.libsodium.org/doc/advanced/scalar_multiplication).
 
 #### `crypto_scalarmult_base(publicKey, secretKey)`
 
@@ -910,10 +992,10 @@ Derive a shared secret from a local secret key and a remote public key.
 
 The generated shared secret is stored in `sharedSecret`.
 
-### Elliptic curve point aritmhetic
+### Finite field aritmhetic
 
-Bindings for the crypto_core_ed25519 and crypto_co_ed25519 API.
-[See the libsodium crypto_core_ed25519 docs for more information](https://download.libsodium.org/doc/advanced/point-arithmetic.html).
+Bindings for the crypto_scalarmult_ed25519 and crypto_core_ed25519 API.
+[See the libsodium docs for more information](https://download.libsodium.org/doc/advanced/point-arithmetic).
 
 #### Constants
 
@@ -921,6 +1003,8 @@ Bindings for the crypto_core_ed25519 and crypto_co_ed25519 API.
 * `crypto_scalarmult_ed25519_SCALARBYTES`
 * `crypto_core_ed25519_BYTES`
 * `crypto_core_ed25519_UNIFORMBYTES`
+* `crypto_core_ed25519_SCALARBYTES`
+* `crypto_core_ed25519_NONREDUCEDSCALARBYTES`
 
 #### `var bool = crypto_core_ed25519_is_valid_point(p)`
 
@@ -963,6 +1047,27 @@ Multiply the basepoint by scalar `n` and store its compressed representation in
 
 Note this function will throw if `n` is zero
 
+#### `crypto_scalarmult_ed25519_noclamp(q, n, p)`
+
+Multiply point `p` by scalar `n` and store its compressed representation in `q`.
+This version does not clamp.
+
+* `q` must be `Buffer` of at least `crypto_scalarmult_ed25519_BYTES` bytes
+* `n` must be `Buffer` of at least `crypto_scalarmult_ed25519_SCALARBYTES` bytes
+* `p` must be `Buffer` of at least `crypto_scalarmult_ed25519_BYTES` bytes
+
+Note this function will throw if `n` is zero or `p` is an invalid curve point.
+
+#### `crypto_scalarmult_ed25519_base_noclamp(q, n)`
+
+Multiply the basepoint by scalar `n` and store its compressed representation in
+`q`. This version does not clamp.
+
+* `q` must be `Buffer` of at least `crypto_scalarmult_ed25519_BYTES` bytes
+* `n` must be `Buffer` of at least `crypto_scalarmult_ed25519_SCALARBYTES` bytes
+
+Note this function will throw if `n` is zero
+
 #### `crypto_core_ed25519_add(r, p, q)`
 
 Add point `q` to `p`, storing the result to `r`.
@@ -983,10 +1088,60 @@ Subtract point `q` to `p`, storing the result to `r`.
 
 Will throw if `p`, `q` are not valid curve points
 
+#### `crypto_core_ed25519_scalar_random(r)`
+
+Generate random scalar in `]0..L[`, storing it in `r`.
+
+* `r` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+
+#### `crypto_core_ed25519_scalar_reduce(r, s)`
+
+Reduce `s mod L`, storing it in `r`.
+
+* `r` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+* `s` must be `Buffer` of at least `crypto_core_ed25519_NONREDUCEDSCALARBYTES` bytes
+
+#### `crypto_core_ed25519_scalar_invert(recip, s)`
+
+Find `recip` such that `s * recip = 1 (mod L)`, storing it in `recip`.
+
+* `recip` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+* `s` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+
+#### `crypto_core_ed25519_scalar_negate(neg, s)`
+
+Find `neg` such that `s + neg = 0 (mod L)`, storing it in `recip`.
+
+* `recip` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+* `s` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+
+#### `crypto_core_ed25519_scalar_complement(comp, s)`
+
+Find `comp` such that `s + comp = 1 (mod L)`, storing it in `recip`.
+
+* `comp` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+* `s` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+
+#### `crypto_core_ed25519_scalar_add(z, x, y)`
+
+Add `x` and `y` such that `x + y = z (mod L)`, storing it in `z`.
+
+* `x` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+* `y` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+* `z` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+
+#### `crypto_core_ed25519_scalar_sub(z, x, y)`
+
+Subtract `x` and `y` such that `x - y = z (mod L)`, storing it in `z`.
+
+* `x` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+* `y` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+* `z` must be `Buffer` of at least `crypto_core_ed25519_SCALARBYTES` bytes
+
 ### Short hashes
 
 Bindings for the crypto_shorthash API.
-[See the libsodium crypto_shorthash docs for more information](https://download.libsodium.org/doc/hashing/short-input_hashing.html).
+[See the libsodium crypto_shorthash docs for more information](https://download.libsodium.org/doc/hashing/short-input_hashing).
 
 #### `crypto_shorthash(output, input, key)`
 

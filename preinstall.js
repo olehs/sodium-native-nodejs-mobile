@@ -43,31 +43,69 @@ if (process.argv.indexOf('--print-lib') > -1) {
 
 mkdirSync(path.join(__dirname, 'lib'))
 
-switch (os.platform()) {
-  case 'darwin':
-    buildDarwin()
-    break
+// switch (os.platform()) {
+//   case 'darwin':
+//     buildDarwin()
+//     break
 
-  case 'win32':
-    buildWindows()
-    break
+//   case 'win32':
+//     buildWindows()
+//     break
 
-  default:
-    buildUnix('so', function (err) {
-      if (err) throw err
-    })
-    break
+//   default:
+//     buildUnix('so', function (err) {
+//       if (err) throw err
+//     })
+//     break
+// }
+
+buildAndroid('arm', () => {
+  buildAndroid('arm64', () => {
+    buildIOS()
+  })
+})
+
+function findMsBuild () {
+  var possiblePathSuffixes = [
+    '/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/Bin/msbuild.exe',
+    '/Microsoft Visual Studio/2017/Enterprise/MSBuild/15.0/Bin/msbuild.exe',
+    '/Microsoft Visual Studio/2017/Professional/MSBuild/15.0/Bin/msbuild.exe',
+    '/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/msbuild.exe',
+    '/MSBuild/14.0/Bin/MSBuild.exe',
+    '/MSBuild/12.0/Bin/MSBuild.exe'
+  ]
+
+  // First try X86 paths (on 64 bit machine which is most likely) then 32 bit
+  var possiblePaths = possiblePathSuffixes.map(p => process.env['PROGRAMFILES(X86)'] + p)
+    .concat(possiblePathSuffixes.map(p => process.env['PROGRAMFILES'] + p))
+
+  possiblePaths.push(process.env.WINDIR + '/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe')
+
+  for (var counter = 0; counter < possiblePaths.length; counter++) {
+    var possiblePath = path.resolve(possiblePaths[counter])
+    try {
+      fs.accessSync(possiblePath)
+      return possiblePath
+    } catch (error) {
+      // Binary not found checking next path
+    }
+  }
+
+  console.error('MSBuild not found')
+  console.error('You can run "npm install --global --production windows-build-tools" to fix this.')
+
+  process.exit(1)
 }
 
 function buildWindows () {
   var res = path.join(__dirname, 'lib/libsodium-' + arch + '.dll')
   if (fs.existsSync(res)) return
 
-  spawn('.\\msvc-scripts\\process.bat', [], {cwd: dir, stdio: 'inherit'}, function (err) {
+  spawn('.\\msvc-scripts\\process.bat', [], { cwd: dir, stdio: 'inherit' }, function (err) {
     if (err) throw err
-    var msbuild = path.resolve('/', 'Program Files (x86)', 'MSBuild/14.0/Bin/MSBuild.exe')
+    var msbuild = findMsBuild()
     var args = ['/p:Configuration=ReleaseDLL;Platform=' + warch, '/nologo']
-    spawn(msbuild, args, {cwd: dir, stdio: 'inherit'}, function (err) {
+    spawn(msbuild, args, { cwd: dir, stdio: 'inherit' }, function (err) {
       if (err) throw err
 
       var dll = path.join(dir, 'Build/ReleaseDLL/' + warch + '/libsodium.dll')
@@ -83,11 +121,11 @@ function buildUnix (ext, cb) {
   var res = path.join(__dirname, 'lib/libsodium-' + arch + '.' + ext)
   if (fs.existsSync(res)) return cb(null, res)
 
-  spawn('./configure', ['--prefix=' + tmp], {cwd: __dirname, stdio: 'inherit'}, function (err) {
+  spawn('./configure', ['--prefix=' + tmp], { cwd: __dirname, stdio: 'inherit' }, function (err) {
     if (err) throw err
-    spawn('make', ['clean'], {cwd: dir, stdio: 'inherit'}, function (err) {
+    spawn('make', ['clean'], { cwd: dir, stdio: 'inherit' }, function (err) {
       if (err) throw err
-      spawn('make', ['install'], {cwd: dir, stdio: 'inherit'}, function (err) {
+      spawn('make', ['install'], { cwd: dir, stdio: 'inherit' }, function (err) {
         if (err) throw err
 
         var la = ini.decode(fs.readFileSync(path.join(tmp, 'lib/libsodium.la')).toString())
@@ -105,10 +143,43 @@ function buildUnix (ext, cb) {
 function buildDarwin () {
   buildUnix('dylib', function (err, res) {
     if (err) throw err
-    spawn('install_name_tool', ['-id', res, res], {stdio: 'inherit'}, function (err) {
+    spawn('install_name_tool', ['-id', res, res], { stdio: 'inherit' }, function (err) {
       if (err) throw err
     })
   })
+}
+
+function buildAndroid(arch, cb) {
+  var ext = 'so'
+  var res = path.join(__dirname, 'lib/libsodium-' + arch + '.' + ext)
+  var buildScript =
+    arch === 'arm' ? 'android-armv7-a.sh' :
+    arch === 'arm64' ? 'android-armv8-a.sh' :
+    ':'
+  var outputDir =
+    arch === 'arm' ? 'libsodium/libsodium-android-armv7-a/lib' :
+    arch === 'arm64' ? 'libsodium/libsodium-android-armv8-a/lib' :
+    '.'
+  if (fs.existsSync(res)) return
+
+  spawn('./configure-mobile', [], { cwd: __dirname, stdio: 'inherit' }, function (err) {
+    if (err) throw err
+    spawn('./dist-build/' + buildScript, [], { cwd: path.resolve(__dirname, 'libsodium'), stdio: 'inherit', env: {...process.env, LIBSODIUM_FULL_BUILD: 'yes'} }, function (err) {
+      if (err) throw err
+
+      var la = ini.decode(fs.readFileSync(path.resolve(__dirname, outputDir, 'libsodium.la')).toString())
+
+      var lib = fs.realpathSync(path.join(la.libdir, la.dlname))
+      fs.rename(lib, res, function (err) {
+        if (err) throw err
+        if (cb) cb()
+      })
+    })
+  })
+}
+
+function buildIOS() {
+  // TODO
 }
 
 function spawn (cmd, args, opts, cb) {

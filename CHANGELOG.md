@@ -1,5 +1,63 @@
 # CHANGELOG
 
+## Current
+
+## v2.4.2
+
+* Do travis release on `lts/*` node version
+
+## v2.4.1
+
+* We cannot yet support Node 12 or Electron 5, so explicit versions on prebuildify.
+
+## v2.4.0
+
+* Fix documentation error (thanks @jedisct1)
+* Add `crypto_pwhash_scryptsalsa208sha256_*` functions and constants.
+
+## v2.3.0
+
+* Upgrade to libsodium 1.0.17
+* Add new `sodium_sub` (opposite of `sodium_add`)
+* Add new finite field operations `crypto_core_ed25519_*` and constants
+* Add `crypto_sign_ed25519_sk_to_pk`
+
+## v2.2.6
+
+* Rebuilding the electron prebuild to get 4.0.4 support to work. This has a fix
+  for an ABI mismatch.
+
+## v2.2.5
+
+* Rebuilding the electron prebuild to get 4.0.0 support to work.
+
+## v2.2.4
+
+* Updated cross-references to libsodium documentation (thanks @stripedpajamas)
+* Fix documentation typo (thanks @ralphtheninja)
+* Fix [DEP0005] DeprecationWarning: `Buffer()` (thanks @ralphtheninja)
+* Upgrade and be compliant with standard@12
+* Improve robustness of Windows builds. This means that we now use the "best"
+  possible MSBuild. Thank you for all the work @enko
+* Due to the previous effort we can now build all artefacts on Travis and their
+  new Windows offering
+* Amend the new MSBuild finding algorithm to look for "Program Files (x86)"
+  first, such that cross-compiling works
+
+## v2.2.3
+
+* Add Node 11 to build matrix
+
+## v2.2.2
+
+* Document release process
+* Wrong error messages wrt. `crypto_sign`. Thanks @jackschmidt
+* Build for Electron v3.0.0
+
+## v2.2.1
+
+* Fix CHANGELOG
+
 ## v2.2.0
 
 * Register tags for `async_hook`s on `crypto_pwhash_*_async` functions
