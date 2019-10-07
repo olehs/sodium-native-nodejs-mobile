@@ -27,6 +27,7 @@ var arch = process.env.ARCH || os.arch()
 // }
 
 buildAndroid('arm')
+buildAndroid('arm64')
 buildIOS()
 
 function buildWindows () {

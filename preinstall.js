@@ -60,6 +60,7 @@ mkdirSync(path.join(__dirname, 'lib'))
 // }
 
 buildAndroid('arm')
+buildAndroid('arm64')
 buildIOS()
 
 function findMsBuild () {
@@ -149,8 +150,14 @@ function buildDarwin () {
 function buildAndroid(arch) {
   var ext = 'so'
   var res = path.join(__dirname, 'lib/libsodium-' + arch + '.' + ext)
-  var buildScript = arch === 'arm' ? 'android-armv7-a.sh' : ':'
-  var outputDir = arch === 'arm' ? 'libsodium/libsodium-android-armv7-a/lib' : '.'
+  var buildScript =
+    arch === 'arm' ? 'android-armv7-a.sh' :
+    arch === 'arm64' ? 'android-armv8-a.sh' :
+    ':'
+  var outputDir =
+    arch === 'arm' ? 'libsodium/libsodium-android-armv7-a/lib' :
+    arch === 'arm64' ? 'libsodium/libsodium-android-armv8-a/lib' :
+    '.'
   if (fs.existsSync(res)) return
 
   spawn('./configure-mobile', [], { cwd: __dirname, stdio: 'inherit' }, function (err) {
