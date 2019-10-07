@@ -26,9 +26,11 @@ var arch = process.env.ARCH || os.arch()
 //     break
 // }
 
-buildAndroid('arm')
-buildAndroid('arm64')
-buildIOS()
+buildAndroid('arm', () => {
+  buildAndroid('arm64', () => {
+    buildIOS()
+  })
+})
 
 function buildWindows () {
   var lib = path.join(__dirname, 'lib/libsodium-' + arch + '.dll')
@@ -66,7 +68,7 @@ function buildDarwin () {
   })
 }
 
-function buildAndroid(arch) {
+function buildAndroid(arch, cb) {
   var libPath = path.join(__dirname, 'lib/libsodium-' + arch + '.so')
   if (!fs.existsSync(libPath)) {
     console.error('postinstall failed because expected a file to exist, ' +
@@ -82,6 +84,7 @@ function buildAndroid(arch) {
   if (fs.existsSync(dst)) return
   copy(lib, dst, function (err) {
     if (err) throw err
+    if (cb) cb()
   })
 }
 
