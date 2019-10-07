@@ -59,9 +59,11 @@ mkdirSync(path.join(__dirname, 'lib'))
 //     break
 // }
 
-buildAndroid('arm')
-buildAndroid('arm64')
-buildIOS()
+buildAndroid('arm', () => {
+  buildAndroid('arm64', () => {
+    buildIOS()
+  })
+})
 
 function findMsBuild () {
   var possiblePathSuffixes = [
@@ -147,7 +149,7 @@ function buildDarwin () {
   })
 }
 
-function buildAndroid(arch) {
+function buildAndroid(arch, cb) {
   var ext = 'so'
   var res = path.join(__dirname, 'lib/libsodium-' + arch + '.' + ext)
   var buildScript =
@@ -170,6 +172,7 @@ function buildAndroid(arch) {
       var lib = fs.realpathSync(path.join(la.libdir, la.dlname))
       fs.rename(lib, res, function (err) {
         if (err) throw err
+        if (cb) cb()
       })
     })
   })
