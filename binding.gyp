@@ -37,9 +37,6 @@
             '-g',
             '-O3',
           ],
-          'ldflags': [
-            '--disable-rpath',
-          ],
           'libraries': [
             '../lib/libsodium-<(target_arch).so',
           ],
