@@ -38,7 +38,7 @@
             '-O3',
           ],
           'libraries': [
-            'lib/libsodium-<target_arch>.so',
+            'lib/libsodium-<(target_arch).so',
             '-Wl,-rpath=\\$$ORIGIN'
           ],
         }]
