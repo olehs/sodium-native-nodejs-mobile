@@ -38,8 +38,14 @@
             '-O3',
           ],
           'libraries': [
-            '../lib/libsodium-<(target_arch).so',
+            '<(module_root_dir)/lib/libsodium-<(target_arch).so',
           ],
+          'copies': [{
+            'files': [
+              '<(module_root_dir)/lib/libsodium-<(target_arch).so',
+            ],
+            'destination': '<(PRODUCT_DIR)/',
+          }],
         }]
       ]
     }
