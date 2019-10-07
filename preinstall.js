@@ -153,7 +153,7 @@ function buildAndroid(arch) {
   var outputDir = arch === 'arm' ? 'libsodium/libsodium-android-armv7-a/lib' : '.'
   if (fs.existsSync(res)) return
 
-  spawn('./configure-mobile', [], { cwd: __dirname, stdio: 'inherit' }, function (err) {
+  spawn('./configure-mobile', [], { cwd: __dirname, stdio: 'inherit', env: {LIBSODIUM_FULL_BUILD: 1} }, function (err) {
     if (err) throw err
     spawn('./dist-build/' + buildScript, [], { cwd: path.resolve(__dirname, 'libsodium'), stdio: 'inherit' }, function (err) {
       if (err) throw err
