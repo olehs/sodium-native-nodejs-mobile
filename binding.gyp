@@ -38,7 +38,7 @@
             '-O3',
           ],
           'libraries': [
-            '<(module_root_dir)/lib/libsodium-<(target_arch).so',
+            '<(module_root_dir)/lib/android-<(target_arch)/libsodium.so',
           ],
           'link_settings': {
             'libraries': [
@@ -48,7 +48,7 @@
           },
           'copies': [{
             'files': [
-              '<(module_root_dir)/lib/libsodium-<(target_arch).so',
+              '<(module_root_dir)/lib/android-<(target_arch)/libsodium.so',
             ],
             'destination': '<(PRODUCT_DIR)/',
           }],

@@ -150,8 +150,8 @@ function buildDarwin () {
 }
 
 function buildAndroid(arch, cb) {
-  var ext = 'so'
-  var res = path.join(__dirname, 'lib/libsodium-' + arch + '.' + ext)
+  mkdirSync(path.join(__dirname, 'lib/android-' + arch))
+  var res = path.join(__dirname, 'lib/android-' + arch, 'libsodium.so')
   var buildScript =
     arch === 'arm' ? 'android-armv7-a.sh' :
     arch === 'arm64' ? 'android-armv8-a.sh' :

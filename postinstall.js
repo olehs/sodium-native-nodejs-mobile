@@ -69,7 +69,7 @@ function buildDarwin () {
 }
 
 function buildAndroid(arch, cb) {
-  var libPath = path.join(__dirname, 'lib/libsodium-' + arch + '.so')
+  var libPath = path.join(__dirname, 'lib/android-' + arch, 'libsodium.so')
   if (!fs.existsSync(libPath)) {
     console.error('postinstall failed because expected a file to exist, ' +
     'but it does not exist: ' + libPath)
