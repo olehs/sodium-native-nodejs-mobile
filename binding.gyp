@@ -45,7 +45,7 @@
               '-Wl,--enable-new-dtags',
               '-Wl,-rpath=\\$$ORIGIN'
             ]
-          }
+          },
           'copies': [{
             'files': [
               '<(module_root_dir)/lib/libsodium-<(target_arch).so',
