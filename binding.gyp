@@ -6,7 +6,7 @@
     {
       'target_name': 'sodium',
       'conditions': [
-        ['OS == "android"', {
+        ['OS == "android" or OS == "ios"', {
           'include_dirs' : [
             "<!(node -e \"require('nan')\")",
             'libsodium/src/libsodium/include'
@@ -37,22 +37,35 @@
             '-g',
             '-O3',
           ],
-          'libraries': [
-            '<(module_root_dir)/lib/android-<(target_arch)/libsodium.so',
-          ],
           'link_settings': {
             'libraries': [
               '-Wl,--enable-new-dtags',
               '-Wl,-rpath=\\$$ORIGIN'
             ]
           },
+        }],
+        ['OS == "android"', {
+          'libraries': [
+            '<(module_root_dir)/lib/android-<(target_arch)/libsodium.so',
+          ],
           'copies': [{
             'files': [
               '<(module_root_dir)/lib/android-<(target_arch)/libsodium.so',
             ],
             'destination': '<(PRODUCT_DIR)/',
           }],
-        }]
+        }],
+        ['OS == "ios"', {
+          'libraries': [
+            '<(module_root_dir)/lib/ios/libsodium.so',
+          ],
+          'copies': [{
+            'files': [
+              '<(module_root_dir)/lib/ios/libsodium.so',
+            ],
+            'destination': '<(PRODUCT_DIR)/',
+          }],
+        }],
       ]
     }
   ],
