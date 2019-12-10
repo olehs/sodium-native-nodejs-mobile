@@ -189,6 +189,12 @@ function buildIOS(cb) {
 
   spawn('./configure-mobile', [], { cwd: __dirname, stdio: 'inherit' }, function (err) {
     if (err) throw err
+
+    // Patch ./dist-build/ios.sh
+    var replacementBuildScript = path.join(__dirname, 'patches/ios.sh')
+    var targetBuildScript = path.join(__dirname, 'libsodium/dist-build/ios.sh')
+    fs.copyFileSync(replacementBuildScript, targetBuildScript)
+
     spawn('./dist-build/ios.sh', [], { cwd: path.resolve(__dirname, 'libsodium'), stdio: 'inherit', env: {...process.env, LIBSODIUM_FULL_BUILD: 'yes'} }, function (err) {
       if (err) throw err
 
