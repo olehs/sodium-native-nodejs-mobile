@@ -7,10 +7,6 @@
       'target_name': 'sodium',
       'conditions': [
         ['OS == "android" or OS == "ios"', {
-          'include_dirs' : [
-            "<!(node -e \"require('nan')\")",
-            'libsodium/src/libsodium/include'
-          ],
           'sources': [
             'binding.cc',
             'src/crypto_hash_sha256_wrap.cc',
@@ -45,6 +41,10 @@
           },
         }],
         ['OS == "android"', {
+          'include_dirs' : [
+            "<!(node -e \"require('nan')\")",
+            'libsodium/src/libsodium/include'
+          ],
           'libraries': [
             '<(module_root_dir)/lib/android-<(target_arch)/libsodium.so',
           ],
@@ -56,6 +56,10 @@
           }],
         }],
         ['OS == "ios"', {
+          'include_dirs' : [
+            "<!(node -e \"require('nan')\")",
+            'libsodium/libsodium-ios/include',
+          ],
           'libraries': [
             '<(module_root_dir)/lib/ios/libsodium.so',
           ],
