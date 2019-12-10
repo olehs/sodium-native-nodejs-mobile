@@ -1,6 +1,6 @@
 {
   "name": "sodium-native-nodejs-mobile",
-  "version": "2.4.2-27",
+  "version": "2.4.2-28",
   "description": "Low level bindings for libsodium",
   "main": "index.js",
   "dependencies": {

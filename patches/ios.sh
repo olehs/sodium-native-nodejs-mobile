@@ -44,7 +44,7 @@ mkdir -p -- "$PREFIX/lib"
 lipo -create \
   "$IOS64_PREFIX/lib/libsodium.a" \
   -output "$PREFIX/lib/libsodium.a"
-mv -f -- "$IOS32_PREFIX/include" "$PREFIX/"
+mv -f -- "$IOS64_PREFIX/include" "$PREFIX/"
 
 echo
 echo "libsodium has been installed into $PREFIX"
