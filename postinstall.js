@@ -90,7 +90,7 @@ function buildAndroid(arch, cb) {
   })
 }
 
-function buildIOS() {
+function buildIOS(cb) {
   var libPath = path.join(__dirname, 'lib/ios', 'libsodium.so')
   if (!fs.existsSync(libPath)) {
     console.error('postinstall failed because expected a file to exist, ' +

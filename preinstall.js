@@ -181,7 +181,7 @@ function buildAndroid(arch, cb) {
   })
 }
 
-function buildIOS() {
+function buildIOS(cb) {
   mkdirSync(path.join(__dirname, 'lib/ios'))
   var res = path.join(__dirname, 'lib/ios', 'libsodium.so')
   var outputDir = 'libsodium/libsodium-ios/lib';
