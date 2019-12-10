@@ -33,12 +33,6 @@
             '-g',
             '-O3',
           ],
-          'link_settings': {
-            'libraries': [
-              '-Wl,--enable-new-dtags',
-              '-Wl,-rpath=\\$$ORIGIN'
-            ]
-          },
         }],
         ['OS == "android"', {
           'include_dirs' : [
@@ -48,6 +42,12 @@
           'libraries': [
             '<(module_root_dir)/lib/android-<(target_arch)/libsodium.so',
           ],
+          'link_settings': {
+            'libraries': [
+              '-Wl,--enable-new-dtags',
+              '-Wl,-rpath=\\$$ORIGIN'
+            ]
+          },
           'copies': [{
             'files': [
               '<(module_root_dir)/lib/android-<(target_arch)/libsodium.so',
