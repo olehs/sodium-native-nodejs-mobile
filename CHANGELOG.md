@@ -2,6 +2,38 @@
 
 ## Current
 
+## v2.4.10
+
+* Prebuilds for Electron 8
+
+## v2.4.9
+
+* Downgrades npm on travis to 6.11.x as we cannot build prebuilds with node-gyp@5.0.5. Can be upgraded again when npm ships node-gyp@6.
+
+## v2.4.8
+
+* Removing Node 4 and 6 from Travis as the config does not work there. We still build for 4 and 6 though.
+
+## v2.4.7
+
+* Prebuilds for Node 13 and new Electron
+
+## v2.4.6
+
+* Prebuildify fixes
+
+## v2.4.5
+
+* node-gyp-build was accidentally added as a dev dependency.
+
+## v2.4.4
+
+* Fix issue with node-gyp using the node 6.0.0 headers for electron 6.0.0 when prebuilding
+
+## v2.4.3
+
+* Add Node 12 and Electron 5 support (thanks @davedoesdev)
+
 ## v2.4.2
 
 * Do travis release on `lts/*` node version
