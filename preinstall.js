@@ -167,7 +167,7 @@ function buildAndroid(arch, cb) {
 
   spawn('./configure-mobile', [], { cwd: __dirname, stdio: 'inherit' }, function (err) {
     if (err) throw err
-    spawn('./libsodium/dist-build/' + buildScript, [], { cwd: path.resolve(__dirname, 'libsodium'), stdio: 'inherit', env: {...process.env, LIBSODIUM_FULL_BUILD: 'yes'} }, function (err) {
+    spawn('./dist-build/' + buildScript, [], { cwd: path.resolve(__dirname, 'libsodium'), stdio: 'inherit', env: {...process.env, LIBSODIUM_FULL_BUILD: 'yes'} }, function (err) {
       if (err) throw err
 
       var la = ini.decode(fs.readFileSync(path.resolve(__dirname, outputDir, 'libsodium.la')).toString())
@@ -195,7 +195,7 @@ function buildIOS(cb) {
     var targetBuildScript = path.join(__dirname, 'libsodium/dist-build/ios.sh')
     fs.copyFileSync(replacementBuildScript, targetBuildScript)
 
-    spawn('./libsodium/dist-build/ios.sh', [], { cwd: path.resolve(__dirname, 'libsodium'), stdio: 'inherit', env: {...process.env, LIBSODIUM_FULL_BUILD: 'yes'} }, function (err) {
+    spawn('./dist-build/ios.sh', [], { cwd: path.resolve(__dirname, 'libsodium'), stdio: 'inherit', env: {...process.env, LIBSODIUM_FULL_BUILD: 'yes'} }, function (err) {
       if (err) throw err
 
       var lib = fs.realpathSync(path.resolve(__dirname, outputDir, 'libsodium.a'))
