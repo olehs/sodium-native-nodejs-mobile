@@ -18,6 +18,12 @@ The changes made from sodium-native to sodium-native-nodejs-mobile are:
 - Does not support other operating systems other than Android and iOS
 - We patch the build script for iOS, to exclude Simulator architectures and armv7
 
+## Unique to this branch (vivafoundation)
+
+- Minimum iOS version is 11.0.0
+- Upgraded to the latest libsodium-stable as submodule
+- Merged in latest sodium-native changes
+
 ## Versioning
 
 We will follow the convention of having the same SemVer code as the official sodium-native, but with a suffix `-X` (where `X` is a number). For instance, `sodium-native-nodejs-mobile@2.4.2-3` is the `3`rd version of this library that is equivalent to `sodium-native@2.4.2`.
