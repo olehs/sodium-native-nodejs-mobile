@@ -4,8 +4,8 @@ export PREFIX="$(pwd)/libsodium-ios"
 export IOS64_PREFIX="$PREFIX/tmp/ios64"
 export XCODEDIR=$(xcode-select -p)
 
-export IOS_SIMULATOR_VERSION_MIN=${IOS_SIMULATOR_VERSION_MIN-"9.0.0"}
-export IOS_VERSION_MIN=${IOS_VERSION_MIN-"9.0.0"}
+export IOS_SIMULATOR_VERSION_MIN=${IOS_SIMULATOR_VERSION_MIN-"11.0.0"}
+export IOS_VERSION_MIN=${IOS_VERSION_MIN-"11.0.0"}
 
 mkdir -p $IOS64_PREFIX || exit 1
 
