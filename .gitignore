@@ -1,5 +1,9 @@
 /android-toolchain-armv7-a
+/android-toolchain-armv8-a
+/android-toolchain-x86-a
+/android-toolchain-x86_64-a
 node_modules
 build
 tmp
 lib
+package-lock.json
