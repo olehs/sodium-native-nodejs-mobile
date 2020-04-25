@@ -204,7 +204,7 @@ function buildAndroid(arch, cb) {
       : arch === "arm64"
       ? "libsodium/libsodium-android-armv8-a/lib"
       : arch === "x86"
-      ? "libsodium/libsodium-android-x86/lib"
+      ? "libsodium/libsodium-android-i686/lib"
       : arch === "x86_64"
       ? "libsodium/libsodium-android-x86_64/lib"
       : ".";

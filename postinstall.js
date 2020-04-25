@@ -106,7 +106,7 @@ function buildAndroid(arch, cb) {
         path.join(
           __dirname,
           arch === "x86"
-            ? "libsodium/libsodium-android-x86/lib/libsodium.la"
+            ? "libsodium/libsodium-android-i686/lib/libsodium.la"
             : arch === "x86_64"
             ? "libsodium/libsodium-android-x86_64/lib/libsodium.la"
             : arch === "armv7"
